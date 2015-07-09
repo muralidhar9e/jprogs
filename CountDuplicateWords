@@ -1,0 +1,73 @@
+package com.java;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.StringTokenizer;
+/**
+ * @author javabynataraj.blogspot.com
+ * 
+ */
+public class CountDuplicateWords {
+     
+    public Map<String, Integer> getWordCount(String fileName){
+        BufferedReader br = null;
+        Map<String, Integer> wordMap = new HashMap<String, Integer>();
+        try {
+        	br = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
+            String line = null;
+            while((line = br.readLine()) != null){
+                StringTokenizer st = new StringTokenizer(line, " ");
+                while(st.hasMoreTokens()){
+                    String temp = st.nextToken().toLowerCase();
+                    if(wordMap.containsKey(temp)){
+                        wordMap.put(temp, wordMap.get(temp)+1);
+                    } else {
+                        wordMap.put(temp, 1);
+                    }
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally{
+            try{
+            	if(br != null) 
+            		br.close();
+            	}catch(Exception ex){}
+        }
+        return wordMap;
+    }
+     
+    public List<Entry<String, Integer>> sortByValue(Map<String, Integer> wordMap){
+        Set<Entry<String, Integer>> set = wordMap.entrySet();
+        List<Entry<String, Integer>> list = new ArrayList<Entry<String, Integer>>(set);
+        Comparator<Map.Entry<String, Integer>> comparator = new Comparator<Map.Entry<String, Integer>>(){
+        	public int compare( Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2 ){
+                return (o2.getValue()).compareTo( o1.getValue() );
+            }
+        };
+        Collections.sort( list, comparator);
+        return list;
+    }
+     
+    public static void main(String a[]){
+    	CountDuplicateWords mdc = new CountDuplicateWords();
+        Map<String, Integer> wordMap = mdc.getWordCount("C:/MyTestFile.txt");
+        List<Entry<String, Integer>> list = mdc.sortByValue(wordMap);
+        for(Map.Entry<String, Integer> entry:list){
+            System.out.println(entry.getKey()+" ===>> "+entry.getValue());
+        }
+    }
+}
